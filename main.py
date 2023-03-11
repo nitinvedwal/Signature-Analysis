@@ -24,7 +24,7 @@ for file in filelocation:
             ymin = min(ymin, data[i][1])
             xmax = max(xmax, data[i][0])
             ymax = max(ymax, data[i][1])
-
+        # here totalpoints are the points with pendowns only
         totalpoints = 0
         for i in range(len(data)):
             if (data[i][3]):
@@ -122,6 +122,21 @@ for file in filelocation:
 
         # print("std d is"+str(stdd))
         # print("std theta is"+str(stdtheta))
+        # ------------------------section 5----------------------------------------------
+        #  making skewness and kurtosis
+        skewnesssumx = 0
+        skewnesssumy = 0
+        kurtosissumx = 0
+        kurtosissumy = 0
+        for i in range(len(x)):
+            skewnesssumx += pow((x[i]-meanx), 3)
+            skewnesssumy += pow((y[i]-meany), 3)
+            kurtosissumx += pow((x[i]-meanx), 4)
+            kurtosissumy += pow((y[i]-meany), 4)
+        skewnessx = skewnesssumx/((totalpoints-1)*pow(stdx, 3))
+        skewnessy = skewnesssumy/((totalpoints-1)*pow(stdy, 3))
+        kurtosisx = kurtosissumx/((totalpoints-1)*pow(stdx, 3))
+        kurtosisy = kurtosissumy/((totalpoints-1)*pow(stdx, 3))
 
         # ------------------------section 3----------------------------------------------
         # velocity acceleration angular velocity
@@ -154,11 +169,36 @@ for file in filelocation:
         for i in range(len(velocity)-1):
             temp = (abs(velocity[i+1]-velocity[i]))*(tend-tstart)
             acceleration.append(temp/(timeseries[i+1]-timeseries[i]))
-
+        avgvelocity = sum(velocity)/len(velocity)
+        avgacceleration = sum(acceleration)/len(acceleration)
+        avgangvelocity = sum(angvelocity)/len(angvelocity)
         # -------------------------section 4-----------------------------------------------
         # numbers of penups and down
         pencount = 0
         for i in range(len(data)-1):
             if (data[i+1][3] != data[i][3]):
                 pencount += 1
-        print(pencount)
+        # print(pencount)
+
+        # --------------------------making features vector----------------------------------
+        features = []
+        features.append(meanx)
+        features.append(meany)
+        features.append(meanpressure)
+        features.append(stdx)
+        features.append(stdy)
+        features.append(stdpressure)
+        features.append(meand)
+        features.append(meantheta)
+        features.append(mediand)
+        features.append(mediantheta)
+        features.append(stdd)
+        features.append(stdtheta)
+        features.append(skewnessx)
+        features.append(skewnessy)
+        features.append(kurtosisx)
+        features.append(kurtosisy)
+        features.append(avgvelocity)
+        features.append(avgacceleration)
+        features.append(avgangvelocity)
+        print(features)
